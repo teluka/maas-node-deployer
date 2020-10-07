@@ -1,0 +1,59 @@
+maas_apikey: dwvmFC35fxvwCKrLWU:uXUwrTaqzksu2mmjR7:6sNDjPuR49HDT4mM7pdLn8LzCFYe9UdW
+maas_url: http://maas-server.lab:5240/MAAS
+tag_filter:
+- maas-deployer
+machines_config:
+  maasgeneric:
+    ipmi_ip: 192.168.50.20
+    tags:
+      - nolvm
+      - nobonding
+    disks:
+      vda:
+        boot: 1
+        partitions:
+          - size: "95%"
+            fstype: ext4
+            mount: /
+    network:
+      enp1s0:
+        address: auto
+        subnet: 192.168.50.0/24
+        default_gw_if: 1
+  superstar1:
+    ipmi_ip: 192.168.50.21
+    tags:
+      - ssd
+      - kvm
+    disks:
+      system0:
+        type: vg
+        parents:
+          vda:
+            boot: 1
+            partitions:
+              - size: "100%"
+      root:
+        type: lv
+        size: "95%"
+        fstype: ext4
+        mount: /
+        parents:
+          - system0
+      swap:
+        type: lv
+        size: "5%"
+        fstype: swap
+        mount: swap
+        parents:
+          - system0
+    network:
+      bond0:
+        type: bond
+        mode: active-backup
+        address: auto
+        subnet: 192.168.50.0/24
+        default_gw_if: 1
+        parents:
+          - enp1s0
+          - enp7s0
